@@ -8,8 +8,17 @@ lambda_cli = boto3.client('lambda')
 # Supported actions:
 # publish -> starts the scenario with sns publish
 # clear -> clears the list of sessions
+# search -> search via aws Elasticsearch
+
 payload = {
-    "action": "publish"
+    "action": "publish",
+    "messages": [{'id': 'a1', 'ability': 'Drinks people\'s heads'},
+                 {'id': 'a2', 'ability': 'Touches people and makes them fry'}]
+}
+
+payload1 = {
+    "action": "search",
+    "search_text": "people"
 }
 
 response = lambda_cli.invoke(
