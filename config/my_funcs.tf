@@ -5,7 +5,7 @@ resource "aws_lambda_function" "base_lambda" {
   role              = "arn:aws:iam::253712699852:role/lambda_basic_execution"
   handler           = "base.lambda_handler"
   runtime           = "python3.6"
-  source_code_hash = "${base64sha256(file("base.zip"))}"
+  source_code_hash  = "${base64sha256(file("base.zip"))}"
 
   /*environment {
     variables = {
