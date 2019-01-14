@@ -1,4 +1,4 @@
-from lambda_base import base
+from lambda_handlers import order_handler
 
 payload1 = {
     "action": "search",
@@ -13,6 +13,6 @@ payload = {
                                              'creatures'}]
 }
 
-lambda_response = base.lambda_handler(payload, "context")
+lambda_response = order_handler.lambda_handler(payload, "context")
 
 print("\nlambda_response:", lambda_response)

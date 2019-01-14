@@ -1,4 +1,4 @@
-#!/home/tedko/Projects/PycharmProjects/SNS_to_IoT/venv/bin/python
+#!/home/tedko/Projects/PycharmProjects/IoT_order_system/venv/bin/python
 
 import sys
 import json

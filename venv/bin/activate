@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/tedko/Projects/PycharmProjects/SNS_to_IoT/venv"
+VIRTUAL_ENV="/home/tedko/Projects/PycharmProjects/IoT_order_system/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
