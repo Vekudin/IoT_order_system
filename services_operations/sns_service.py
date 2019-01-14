@@ -1,6 +1,7 @@
 import json
-import boto3
 import logging
+
+import boto3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -16,7 +17,7 @@ class SnsService:
         """Publishes the orders data to an SNS topic"""
 
         # If there are no orders, then stop the flow for unneeded processes
-        if orders is None or orders == {}:
+        if not orders:
             return {}
 
         # Do some check on orders here ...

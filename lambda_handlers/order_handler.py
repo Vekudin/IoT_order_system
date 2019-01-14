@@ -1,9 +1,13 @@
 import logging
 
 from services_operations.sns_service import SnsService
+from services_operations.es_service import EsService
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+host = "es-host-here"
+path = "cars/calls"
 
 
 def lambda_handler(event, context):
@@ -14,21 +18,22 @@ def lambda_handler(event, context):
         set to the corresponding car's status in the ES instance"""
 
     sns = SnsService()
+    es = EsService(host)
+
+    orders = event.get('orders')
+    car_status_data = event.get('car_status_data')
 
     lambda_response = {
         'status_code': 200
     }
 
-    # (ToDo) Check if there is a free car to take the order or add the order to a queue
-
-    # For now assume that in any order object there is an id for a free car
-    sns_response = sns.publish_orders(event.get('orders'))
+    # The received orders represent data which tells a car to fulfill its order
+    sns_response = sns.publish_orders(orders)
     lambda_response.update(sns_response)
 
-    car_status_configs = event.get('car_status_configs')
-    logger.info(f'car_status_configs:{car_status_configs}')
-    # es_response = es.configure_car_status(event.get('car_status_configs'))
-    # lambda_response.update(es_response)
+    # Cars have received their orders and now their status must be configured
+    es_response = es.update_car_status(car_status_data)
+    lambda_response.update(es_response)
 
     if len(lambda_response) is 1:
         lambda_response['status_code'] = 400

@@ -1,5 +1,6 @@
 import json
 import logging
+
 import boto3
 
 logger = logging.getLogger()
@@ -16,23 +17,25 @@ class IotService:
             containing the received messages."""
 
         iot_payload = {
-            'car_status_configs': []
+            'car_status_data': []
         }
 
         # The SNS message is actually a list of orders
         orders = json.loads(record['Sns']['Message'])
 
-        # Proceeding
+        # Refactoring the data for the cars as it is expected that cars would
+        # read data in a different way than the service
         for order in orders:
-            car_status_config = {
+            car_status = {
                 'car_id': order.get('car_id'),
                 'target_location': {
                     'city': order.get('city'),
                     'housing_estate': order.get('housing_state'),
                     'address': order.get('address')
-                }
+                },
+                'status': 'reaching customer',
             }
-            iot_payload['car_status_configs'].append(car_status_config)
+            iot_payload['car_status_data'].append(car_status)
 
         iot_response = self.iot_data.publish(
             topic='cars/calls',

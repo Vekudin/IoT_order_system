@@ -1,12 +1,17 @@
+import logging
+import json
 import requests
 
 import boto3
 from requests_aws4auth import AWS4Auth
-from elasticsearch import Elasticsearch, RequestsHttpConnection
+from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 region = 'us-east-1'
 service = 'es'
-host = 'endpoint_of_the_domain_here'
 credentials = boto3.Session().get_credentials().get_frozen_credentials()
 awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region,
                    service, session_token=credentials.token)
@@ -14,7 +19,7 @@ awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region,
 
 class EsService:
 
-    def __init__(self):
+    def __init__(self, host):
         self.es = Elasticsearch(
             hosts=[{'host': host, 'port': 443}],
             use_ssl=True,
@@ -22,6 +27,30 @@ class EsService:
             verify_certs=True,
             connection_class=RequestsHttpConnection
         )
+
+    def update_car_status(self, path, car_status_data):
+        """Updates the car's status and target location data."""
+        # If there is no iot-payload continue
+        if not car_status_data:
+            return {}
+
+        logger.info(f"(IN put_message_to_domain) iot_payload: {car_status_data}")
+
+        actions = [
+            {
+                "_index": "cars",
+                "_type": "calls",
+                "_id": car_status_data[i].get('car_id'),
+                "_source": {
+                    "status": car_status_data[i].get('status')
+                }
+
+            }
+            for i in range(len(car_status_data))
+        ]
+
+        helpers.bulk(self.es, actions)
+
 
     def search_in_domain(self, search_text):
         print("search_in_domain executed:", search_text)
@@ -43,27 +72,4 @@ class EsService:
         print("search response-->", response)
         hits = response['hits']['hits']
         print("hits-->", hits)
-
-    def put_message_to_domain(self, iot_payload):
-        path = '/cars/_doc/'
-
-        # If there is no iot-payload continue
-        if iot_payload is None:
-            return {}
-
-        print("(IN put_message_to_domain) iot_payload:", iot_payload)
-
-        payload = {
-            "settings": {
-                "number_of_shards": 3,
-                "number_of_replicas": 2
-            }
-        }
-        # Merging directly the received data from the iot
-        payload.update(iot_payload)
-
-        url = 'https://' + host + path + payload.get('id')
-
-        r = requests.put(url, auth=awsauth, json=payload)
-        print("(IN put_message_to_domain) r.text:", r.text)
 
