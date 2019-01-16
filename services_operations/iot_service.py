@@ -14,7 +14,8 @@ class IotService:
         self.topic = topic
 
     def send_orders_to_cars(self, record):
-        """Sends """
+        """Sends iot_payload to the corresponding orders received from an SNS
+        topic"""
 
         iot_payload = {
             'car_status_data': []
@@ -22,6 +23,12 @@ class IotService:
 
         # The SNS message represents a list of orders
         orders = json.loads(record['Sns']['Message'])
+
+        if not orders:
+            return {
+                'status_code': 400,
+                'error': 'There is somehow an SNS message but no \'orders\' in it!'
+            }
 
         # Refactoring the data for the cars as it is expected that cars would
         # read data in a different way than the service.

@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     if not records:
         return {
             'status_code': 400,
-            'body': 'Object event contains no records or it is not a dict type.'
+            'error': 'Object event contains no records or it is not a dict type.'
         }
 
     iot = IotService('cars/calls')

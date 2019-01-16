@@ -1,16 +1,14 @@
 # ignoring directories in the root directory of the project
 /.idea
-/__pycache__
+__pycache__
 /venv
+*.zip
 
-# ignoring terraform initialisations
+# ignoring local configurations
 config/car_caller_package
 config/order_handler_package
 config/.terraform
-config/car_caller.zip
-config/order_handler.zip
-config/terraform.tfstate
-config/terraform.tfstate.backup
+*.tfstate
 
 !config/iot_topic_rule.tf
 !config/my_funcs.tf

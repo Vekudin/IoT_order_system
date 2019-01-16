@@ -1,10 +1,9 @@
 import logging
 import json
-import requests
 
 import boto3
 from requests_aws4auth import AWS4Auth
-from elasticsearch import Elasticsearch, RequestsHttpConnection, helpers
+from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 
 logger = logging.getLogger()
@@ -29,8 +28,9 @@ class EsService:
         )
 
     def update_car_status(self, car_status_data):
-        """Updates the car's status and target location data."""
-        # If there is no iot-payload continue
+        """Updates the car's status and target location data usually after an
+        order was assigned to the vehicle."""
+        # If there is no iot payload then avoid unnecessary actions
         if not car_status_data:
             return {}
 
@@ -49,7 +49,7 @@ class EsService:
             }
             body += json.dumps(index) + "\n" + json.dumps(doc) + "\n"
 
-        # Manage response
+        # Update the indices
         response = self.es.bulk(body=body)
 
         return response

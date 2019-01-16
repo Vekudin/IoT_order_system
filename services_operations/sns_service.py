@@ -14,7 +14,7 @@ class SnsService:
         self.sns_topic_arn = "arn:aws:sns:us-east-1:253712699852:orders_topic"
 
     def publish_orders(self, orders):
-        """Publishes the orders data to an SNS topic"""
+        """Publishes the orders data to an SNS topic."""
 
         # If there are no orders, then stop the flow for unneeded processes
         if not orders:
@@ -30,6 +30,6 @@ class SnsService:
         return {
             'status_code': sns_response['ResponseMetadata']['HTTPStatusCode'],
             'orders_count': len(orders),
-            'body': "The function was invoked to manage new orders."
+            'task': "The function was invoked to manage new orders."
         }
 

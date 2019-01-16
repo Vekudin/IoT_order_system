@@ -6,8 +6,7 @@ from services_operations.es_service import EsService
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-host = "search-cars-3uxxqnojm2h2asargsvenswncq.us-east-1.es.amazonaws.com"
-path = "cars/calls"
+host = "elasticsearch-endpoint-here"
 
 
 def lambda_handler(event, context):
@@ -38,7 +37,7 @@ def lambda_handler(event, context):
 
     if not lambda_response:
         lambda_response['status_code'] = 400
-        lambda_response['body'] = "Object \"event\" contains none of the expected items"
+        lambda_response['error'] = "Object \"event\" contains none of the expected items"
 
     return lambda_response
 
