@@ -1,0 +1,9 @@
+# ignoring directories in the root directory of the project
+/.idea
+/__pycache__
+/venv
+
+# ignoring terraform initialisations
+/config
+!config/iot_topic_rule.tf
+!config/my_funcs.tf

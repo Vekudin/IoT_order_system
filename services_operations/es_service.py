@@ -28,48 +28,45 @@ class EsService:
             connection_class=RequestsHttpConnection
         )
 
-    def update_car_status(self, path, car_status_data):
+    def update_car_status(self, car_status_data):
         """Updates the car's status and target location data."""
         # If there is no iot-payload continue
         if not car_status_data:
             return {}
 
-        logger.info(f"(IN put_message_to_domain) iot_payload: {car_status_data}")
-
-        actions = [
-            {
-                "_index": "cars",
-                "_type": "calls",
-                "_id": car_status_data[i].get('car_id'),
-                "_source": {
-                    "status": car_status_data[i].get('status')
+        body = ""
+        for car_status in car_status_data:
+            index = {
+                "index": {
+                    "_index": "cars",
+                    "_type": "status",
+                    "_id": car_status.get('car_id')
                 }
-
             }
-            for i in range(len(car_status_data))
-        ]
+            doc = {
+                "target_location": car_status.get('target_location'),
+                "activity": car_status.get('activity')
+            }
+            body += json.dumps(index) + "\n" + json.dumps(doc) + "\n"
 
-        helpers.bulk(self.es, actions)
+        # Manage response
+        response = self.es.bulk(body=body)
 
+        return response
 
-    def search_in_domain(self, search_text):
-        print("search_in_domain executed:", search_text)
-
-        if search_text is None or "":
-            return
-
+    def return_free_cars(self):
+        """Returns all free cars."""
         response = self.es.search(
             index='cars',
             body={
                 "query": {
-                    "multi_match": {
-                        "query": search_text,
-                        "fields": ["ability^3", "id"]
+                    "terms": {
+                        "activity": ["free"]
                     }
                 }
             }
         )
-        print("search response-->", response)
         hits = response['hits']['hits']
-        print("hits-->", hits)
+
+        return hits
 
