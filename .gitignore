@@ -4,6 +4,13 @@
 /venv
 
 # ignoring terraform initialisations
-config/
+config/car_caller_package
+config/order_handler_package
+config/.terraform
+config/car_caller.zip
+config/order_handler.zip
+config/terraform.tfstate
+config/terraform.tfstate.backup
+
 !config/iot_topic_rule.tf
 !config/my_funcs.tf
