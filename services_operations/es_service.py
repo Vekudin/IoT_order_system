@@ -27,27 +27,25 @@ class EsService:
             connection_class=RequestsHttpConnection
         )
 
-    def update_car_status(self, car_status_data):
+    def update_car_status(self, car_status):
         """Updates the car's status and target location data usually after an
         order was assigned to the vehicle."""
         # If there is no iot payload then avoid unnecessary actions
-        if not car_status_data:
+        if not car_status:
             return {}
 
-        body = ""
-        for car_status in car_status_data:
-            index = {
-                "index": {
-                    "_index": "cars",
-                    "_type": "status",
-                    "_id": car_status.get('car_id')
-                }
+        index = {
+            "index": {
+                "_index": "cars",
+                "_type": "status",
+                "_id": car_status.get('car_id')
             }
-            doc = {
-                "target_location": car_status.get('target_location'),
-                "activity": car_status.get('activity')
-            }
-            body += json.dumps(index) + "\n" + json.dumps(doc) + "\n"
+        }
+        doc = {
+            "target_location": car_status.get('target_location'),
+            "activity": car_status.get('activity')
+        }
+        body = json.dumps(index) + "\n" + json.dumps(doc) + "\n"
 
         # Update the indices
         response = self.es.bulk(body=body)

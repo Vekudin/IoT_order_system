@@ -5,6 +5,8 @@ from services_operations.iot_service import IotService
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+iot_topic = 'cars/calls'
+
 
 def lambda_handler(event, context):
     """This function is expected to be invoked only by SNS in order to send data
@@ -18,10 +20,10 @@ def lambda_handler(event, context):
             'error': 'Object event contains no records or it is not a dict type.'
         }
 
-    iot = IotService('cars/calls')
+    iot = IotService(iot_topic)
 
-    # When lambda is invoked by SNS it always receives only one message
-    response = iot.send_orders_to_cars(records[0])
-
+    # When lambda is invoked by SNS it always receives only one record
+    response = iot.send_order_to_cars(records[0])
+    logger.info(response)
     return response
 

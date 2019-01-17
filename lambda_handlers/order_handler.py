@@ -7,37 +7,47 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 host = "elasticsearch-endpoint-here"
+pending_orders = []
 
 
 def lambda_handler(event, context):
     """Object event may have 2 fields:
-    -> 'orders': list containing 'order' payload dicts which has to be delivered
-        to a car in order to reach customer's destination
-    -> 'car_status_configs': list containing car configurations which has to be
-        set to the corresponding car's status in the ES cluster"""
+    -> 'order': list containing 'order' payload which has to be sent to an SNS
+        topic in order to reach the "car_caller" lambda function
+    -> 'car_payload': an iot_payload received from IoT topic Rule"""
 
-    sns = SnsService()
-    es = EsService(host)
+    order = event.get('order')
+    if order:
+        # The received order contains car_id order_id and pickup_location
+        # (todo) validate order
 
-    orders = event.get('orders')
-    car_status_data = event.get('car_status_data')
+        # Saving the order ID so that they will be checked later
+        pending_orders.append(order['order_id'])
 
-    lambda_response = {}
+        sns = SnsService()
+        response = sns.publish_order(order)
 
-    # The received orders represent data which the car needs in order to reach
-    # the customer. At this point every order has its car assigned to it (has car_id).
-    sns_response = sns.publish_orders(orders)
-    lambda_response.update(sns_response)
+        return response
 
-    # Cars have received their orders and now their status will be saved
-    es_response = es.update_car_status(car_status_data)
-    lambda_response.update(es_response)
+    car_payload = event.get('car_payload')
+    if car_payload:
+        # Now data must be secured by removing the observed orders
+        pending_orders.remove(car_payload['order_id'])
 
-    logger.info(lambda_response)
+        logger.info(f"There are {len(pending_orders)} pending orders.")
+        logger.info(f"pending orders: {pending_orders}")
 
-    if not lambda_response:
-        lambda_response['status_code'] = 400
-        lambda_response['error'] = "Object \"event\" contains none of the expected items"
+        return {
+            'status_code': 200,
+            'message': "The function was invoked to secure data."
+        }
 
-    return lambda_response
+        # es = EsService(host)
+        # return es.update_car_status(car_payload)
+
+    return {
+        'status_code': 400,
+        'message': "The event object does not contain order nor car_payload or"
+                   " it is not a dict object."
+    }
 

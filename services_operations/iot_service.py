@@ -13,36 +13,28 @@ class IotService:
         self.iot_data = boto3.client('iot-data')
         self.topic = topic
 
-    def send_orders_to_cars(self, record):
-        """Sends iot_payload to the corresponding orders received from an SNS
-        topic"""
+    def send_order_to_cars(self, record):
+        """Sends car_payload to an iot topic."""
 
+        # The SNS message represents order payload
+        order = json.loads(record['Sns']['Message'])
+
+        # (todo) valdiate order
+
+        # Refactoring the data for the cars as it is assumed that cars would read
+        # data in a different way than the service itself
         iot_payload = {
-            'car_status_data': []
-        }
-
-        # The SNS message represents a list of orders
-        orders = json.loads(record['Sns']['Message'])
-
-        if not orders:
-            return {
-                'status_code': 400,
-                'error': 'There is somehow an SNS message but no \'orders\' in it!'
-            }
-
-        # Refactoring the data for the cars as it is expected that cars would
-        # read data in a different way than the service.
-        for order in orders:
-            car_status = {
-                'car_id': order.get('car_id'),
-                'activity': 'reaching customer',
-                'target_location': {
-                    'city': order.get('city'),
-                    'housing_estate': order.get('housing_estate'),
-                    'address': order.get('address')
+            "car_payload": {
+                'car_id': order['car_id'],
+                'order_id': order['order_id'],
+                'activity': 'reach pickup location',
+                'pickup_location': {
+                    'city': order['pickup_location']['city'],
+                    'housing_estate': order['pickup_location']['housing_estate'],
+                    'address': order['pickup_location']['address']
                 }
             }
-            iot_payload['car_status_data'].append(car_status)
+        }
 
         iot_response = self.iot_data.publish(
             topic=self.topic,
