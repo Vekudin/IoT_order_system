@@ -1,5 +1,8 @@
+import json
 import logging
+from requests import HTTPError
 
+from validators import validate_received_order
 from services_operations.iot_service import IotService
 
 logger = logging.getLogger()
@@ -15,15 +18,18 @@ def lambda_handler(event, context):
 
     records = event.get('Records')
     if not records:
-        return {
-            'status_code': 400,
-            'error': 'Object event contains no records or it is not a dict type.'
-        }
+        raise HTTPError(400, "The request cannot be handled by this function!\n"
+                             "There were no records found in the event object", event)
+
+    # When lambda is invoked by SNS it always receives only one record.
+    order = json.loads(records[0]['Sns']['Message'])
+
+    if not validate_received_order(order):
+        raise HTTPError(400, "The structure of the received order is not\n"
+                             "as expected!", order)
 
     iot = IotService(iot_topic)
-
-    # When lambda is invoked by SNS it always receives only one record
-    response = iot.send_order_to_car(records[0])
+    response = iot.send_order_to_car(order)
 
     return response
 

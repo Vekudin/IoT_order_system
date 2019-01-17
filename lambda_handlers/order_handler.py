@@ -22,10 +22,10 @@ def lambda_handler(event, context):
     if order:
         # The received order contains car_id, order_id and pickup_location
         if not validate_received_order(order):
-            raise HTTPError("The structure of the received order is not as "
-                            "expected!")
+            raise HTTPError(400, "The structure of the received order is not\n"
+                                 "as expected!", order)
 
-        # Saving the order ID so that they will be checked later
+        # Saving the order ID so that it will be checked later
         pending_orders.append(order['order_id'])
 
         sns = SnsService()
@@ -38,7 +38,6 @@ def lambda_handler(event, context):
         # Now data must be secured by removing the observed orders
         pending_orders.remove(car_payload['order_id'])
 
-        logger.info(f"There are {len(pending_orders)} pending orders.")
         logger.info(f"pending orders: {pending_orders}")
 
         return {
@@ -46,7 +45,7 @@ def lambda_handler(event, context):
             'message': "The function was invoked to secure data."
         }
 
-        # Saving the car data as car status in es cluster
+        # Saving the car data as car status in ES cluster
         # es = EsService(host)
         # return es.update_car_status(car_payload)
 

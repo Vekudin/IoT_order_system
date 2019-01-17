@@ -1,10 +1,7 @@
 import json
 import logging
-from requests import HTTPError
 
 import boto3
-
-from validators import validate_received_order
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -16,15 +13,8 @@ class IotService:
         self.iot_data = boto3.client('iot-data')
         self.topic = topic
 
-    def send_order_to_car(self, record):
+    def send_order_to_car(self, order):
         """Sends car_payload to an iot topic."""
-
-        # The SNS message represents order payload
-        order = json.loads(record['Sns']['Message'])
-
-        if not validate_received_order(order):
-            raise HTTPError("The structure of the received order is not as "
-                            "expected!")
 
         # Refactoring the data for the cars as it is assumed that cars would read
         # data in a different way than the service itself.
