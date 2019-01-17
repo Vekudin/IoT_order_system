@@ -42,7 +42,7 @@ class EsService:
             }
         }
         doc = {
-            "target_location": car_status.get('target_location'),
+            "pickup_location": car_status.get('pickup_location'),
             "activity": car_status.get('activity')
         }
         body = json.dumps(index) + "\n" + json.dumps(doc) + "\n"

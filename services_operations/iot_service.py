@@ -1,5 +1,6 @@
 import json
 import logging
+from requests import HTTPError
 
 import boto3
 
@@ -22,13 +23,11 @@ class IotService:
         order = json.loads(record['Sns']['Message'])
 
         if not validate_received_order(order):
-            return {
-                'status_code': 400,
-                'message': "The order's structure is not as expected!"
-            }
+            raise HTTPError("The structure of the received order is not as "
+                            "expected!")
 
         # Refactoring the data for the cars as it is assumed that cars would read
-        # data in a different way than the service itself
+        # data in a different way than the service itself.
         iot_payload = {
             "car_payload": {
                 'car_id': order['car_id'],

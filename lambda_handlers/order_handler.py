@@ -46,6 +46,7 @@ def lambda_handler(event, context):
             'message': "The function was invoked to secure data."
         }
 
+        # Saving the car data as car status in es cluster
         # es = EsService(host)
         # return es.update_car_status(car_payload)
 
