@@ -1,7 +1,9 @@
 import logging
+from requests import HTTPError
 
 from services_operations.sns_service import SnsService
 from services_operations.es_service import EsService
+from validators import validate_received_order
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -18,8 +20,10 @@ def lambda_handler(event, context):
 
     order = event.get('order')
     if order:
-        # The received order contains car_id order_id and pickup_location
-        # (todo) validate order
+        # The received order contains car_id, order_id and pickup_location
+        if not validate_received_order(order):
+            raise HTTPError("The structure of the received order is not as "
+                            "expected!")
 
         # Saving the order ID so that they will be checked later
         pending_orders.append(order['order_id'])

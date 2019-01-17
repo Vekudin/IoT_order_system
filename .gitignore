@@ -9,7 +9,7 @@ config/car_caller_package
 config/order_handler_package
 config/.terraform
 *.tfstate
-*.tfstate.backup
+*.backup
 
 !config/iot_topic_rule.tf
 !config/my_funcs.tf

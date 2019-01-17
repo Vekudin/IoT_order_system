@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     iot = IotService(iot_topic)
 
     # When lambda is invoked by SNS it always receives only one record
-    response = iot.send_order_to_cars(records[0])
-    logger.info(response)
+    response = iot.send_order_to_car(records[0])
+
     return response
 
