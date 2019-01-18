@@ -23,6 +23,6 @@ class SnsService:
 
         return {
             'status_code': sns_response['ResponseMetadata']['HTTPStatusCode'],
-            'message': "The function was invoked to manage new order."
+            'body': "The function was invoked to manage new order."
         }
 

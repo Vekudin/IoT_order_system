@@ -2,13 +2,11 @@ import logging
 from requests import HTTPError
 
 from services_operations.sns_service import SnsService
-from services_operations.es_service import EsService
 from validators import validate_received_order
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-host = "elasticsearch-endpoint-here"
 pending_orders = []
 
 
@@ -22,7 +20,7 @@ def lambda_handler(event, context):
     if order:
         # The received order contains car_id, order_id and pickup_location
         if not validate_received_order(order):
-            raise HTTPError(400, "The structure of the received order is not\n"
+            raise HTTPError(400, "The structure of the received order is not "
                                  "as expected!", order)
 
         # Saving the order ID so that it will be checked later
@@ -42,16 +40,9 @@ def lambda_handler(event, context):
 
         return {
             'status_code': 200,
-            'message': "The function was invoked to secure data."
+            'body': "The function was invoked to secure data."
         }
 
-        # Saving the car data as car status in ES cluster
-        # es = EsService(host)
-        # return es.update_car_status(car_payload)
-
-    return {
-        'status_code': 400,
-        'message': "The event object does not contain order nor car_payload or"
-                   " it is not a dict object."
-    }
+    raise HTTPError(400, "Function order_handler was invoked with unexpected "
+                         "payload!", event)
 

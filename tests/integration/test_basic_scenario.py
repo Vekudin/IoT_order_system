@@ -39,17 +39,8 @@ for func_payload in func_payloads:
         InvocationType='RequestResponse',
         Payload=bytes(json.dumps(func_payload), 'utf-8')
     )
+    time.sleep(0.3)
     for k, v in response.items():
         logger.info(k, ":", v)
         if k == "Payload":
             logger.info("payload:", v.read())
-
-response = lambda_cli.invoke(
-        FunctionName='arn:aws:lambda:us-east-1:253712699852:function:order_handler',
-        InvocationType='RequestResponse',
-        Payload=bytes(json.dumps({'a': 12}), 'utf-8')
-    )
-for k, v in response.items():
-    logger.info(k, ":", v)
-    if k == "Payload":
-        logger.info("payload:", v.read())
