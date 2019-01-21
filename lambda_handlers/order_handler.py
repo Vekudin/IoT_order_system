@@ -26,7 +26,7 @@ def lambda_handler(event, context):
         # Saving the order ID so that it will be checked later
         pending_orders.append(order['order_id'])
 
-        sns = SnsService()
+        sns = SnsService(order['sns_topic_arn'])
         response = sns.publish_order(order)
 
         return response
@@ -40,6 +40,7 @@ def lambda_handler(event, context):
 
         return {
             'status_code': 200,
+            'order_id': car_payload['order_id'],
             'body': "The function was invoked to secure data."
         }
 

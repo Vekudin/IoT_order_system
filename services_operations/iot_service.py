@@ -21,13 +21,12 @@ class IotService:
         iot_payload = {
             "car_payload": {
                 'car_id': order['car_id'],
-                'order_id': order['order_id'],
-                'activity': 'reach pickup location',
                 'pickup_location': {
                     'city': order['pickup_location']['city'],
                     'housing_estate': order['pickup_location']['housing_estate'],
                     'address': order['pickup_location']['address']
-                }
+                },
+                'order_id': order['order_id']
             }
         }
 
@@ -38,6 +37,7 @@ class IotService:
         )
 
         return {
-            'status_code': iot_response['ResponseMetadata']['HTTPStatusCode']
+            'status_code': iot_response['ResponseMetadata']['HTTPStatusCode'],
+            'order_id': order['order_id']
         }
 

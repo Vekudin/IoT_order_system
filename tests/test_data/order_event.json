@@ -1,0 +1,13 @@
+{
+  "order": {
+    "car_id": "c1",
+    "pickup_location": {
+      "city": "Sofia",
+      "housing_estate": "Studentski grad",
+      "address": "Dr. Ivan Stranski 59 B"
+    },
+    "order_id": "o1",
+    "iot_topic": "cars/calls",
+    "sns_topic_arn": "arn:aws:sns:us-east-1:253712699852:orders_topic"
+  }
+}

@@ -8,7 +8,6 @@ def validate_received_order(order):
 
     schema = {
         'car_id': {'type': 'string'},
-        'order_id': {'type': 'string'},
         'pickup_location': {
             'type': 'dict',
             'allow_unknown': True,
@@ -17,7 +16,10 @@ def validate_received_order(order):
                 'housing_estate': {'type': 'string'},
                 'address': {'type': 'string'}
             }
-        }
+        },
+        'order_id': {'type': 'string'},
+        'iot_topic': {'type': 'string'},
+        'sns_topic_arn': {'type': 'string'},
     }
 
     return v.validate(order, schema)

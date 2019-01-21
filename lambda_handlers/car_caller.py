@@ -8,8 +8,6 @@ from services_operations.iot_service import IotService
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-iot_topic = 'cars/calls'
-
 
 def lambda_handler(event, context):
     """This function is expected to be invoked only by SNS in order to send data
@@ -28,7 +26,7 @@ def lambda_handler(event, context):
         raise HTTPError(400, "The structure of the received order is not\n"
                              "as expected!", order)
 
-    iot = IotService(iot_topic)
+    iot = IotService(order['iot_topic'])
     response = iot.send_order_to_car(order)
 
     return response
