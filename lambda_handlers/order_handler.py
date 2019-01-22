@@ -11,11 +11,12 @@ pending_orders = []
 
 
 def lambda_handler(event, context):
-    """Object event may have 2 fields:
+    """Object event may have one of the following fields:
     -> 'order': list containing 'order' payload which has to be sent to an SNS
         topic in order to reach the "car_caller" lambda function
     -> 'car_payload': an iot_payload received from IoT topic Rule"""
 
+    # New order incoming
     order = event.get('order')
     if order:
         # The received order contains car_id, order_id and pickup_location
@@ -31,11 +32,13 @@ def lambda_handler(event, context):
 
         return response
 
+    # The function is invoked by an IoT topic rule
     car_payload = event.get('car_payload')
     if car_payload:
         # Now data must be secured by removing the observed orders
+        logger.info(f"received order '{car_payload['order_id']}' from car "
+                    f"'{car_payload['car_id']}' !")
         pending_orders.remove(car_payload['order_id'])
-
         logger.info(f"pending orders: {pending_orders}")
 
         return {
