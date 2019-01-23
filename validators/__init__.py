@@ -1,2 +1,2 @@
 
-from validators.order_validations import validate_received_order
+from validators.new_order_validations import validate_received_order

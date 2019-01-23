@@ -39,5 +39,5 @@ class MQTTWebSocketsClient:
 
 if __name__ == "__main__":
     client = MQTTWebSocketsClient("C1", "a2l18ps0rkgzno-ats.iot.us-east-1.amazonaws.com",
-                                  [("cars/calls", 1)], "./certificates/rootCA.crt")
+                                  [("cars/test_calls", 1)], "./certificates/rootCA.crt")
     client.run()

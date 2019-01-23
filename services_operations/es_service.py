@@ -6,8 +6,7 @@ from requests_aws4auth import AWS4Auth
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 region = 'us-east-1'
 service = 'es'
@@ -27,35 +26,32 @@ class EsService:
             connection_class=RequestsHttpConnection
         )
 
-    def update_car_status(self, car_status):
+    def update_car_status(self, car_payload):
         """Updates the car's status and target location data usually after an
         order was assigned to the vehicle."""
-        # If there is no iot payload then avoid unnecessary actions
-        if not car_status:
-            return {}
 
-        index = {
-            "index": {
-                "_index": "cars",
-                "_type": "status",
-                "_id": car_status.get('car_id')
+        body = {
+            "doc": {
+                "activity": car_payload['activity'],
+                "pickup_location": car_payload['pickup_location'],
+                "order_id": car_payload['order_id']
             }
         }
-        doc = {
-            "pickup_location": car_status.get('pickup_location'),
-            "activity": car_status.get('activity')
-        }
-        body = json.dumps(index) + "\n" + json.dumps(doc) + "\n"
 
-        # Update the indices
-        response = self.es.bulk(body=body)
+        # Update the new status of the car
+        response = self.es.update(
+            index="cars-activities",
+            doc_type='_doc',
+            id=car_payload['car_id'],
+            body=json.dumps(body)
+        )
 
         return response
 
     def return_free_cars(self):
-        """Returns all free cars."""
+        """Returns a list of all free cars."""
         response = self.es.search(
-            index='cars',
+            index='cars-activities',
             body={
                 "query": {
                     "terms": {

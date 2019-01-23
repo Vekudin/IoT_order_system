@@ -21,6 +21,7 @@ class IotService:
         iot_payload = {
             "car_payload": {
                 'car_id': order['car_id'],
+                'activity': "reach pickup location",
                 'pickup_location': {
                     'city': order['pickup_location']['city'],
                     'housing_estate': order['pickup_location']['housing_estate'],

@@ -67,4 +67,5 @@ class Test:
                 Payload=bytes(json.dumps(event), 'utf-8')
             )
             logger.info(response)
+
             time.sleep(0.1)
