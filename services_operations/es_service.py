@@ -27,7 +27,7 @@ class EsService:
         )
 
     def update_car_status(self, car_payload):
-        """Updates the car's status and target location data usually after an
+        """Updates the car's information and target location data usually after an
         order was assigned to the vehicle."""
 
         body = {
@@ -38,7 +38,7 @@ class EsService:
             }
         }
 
-        # Update the new status of the car
+        # Update the car's information
         response = self.es.update(
             index="cars-activities",
             doc_type='_doc',
