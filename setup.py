@@ -5,8 +5,6 @@ import pkginfo
 
 version = '0.1.0'
 
-
-
 setup(
     name="iot_order_system",
     version=version,

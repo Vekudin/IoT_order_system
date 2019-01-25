@@ -13,3 +13,4 @@ config/.terraform
 *.backup
 
 /build/
+/iot_order_system.egg-info/
