@@ -11,3 +11,5 @@ config/order_handler_package
 config/.terraform
 *.tfstate
 *.backup
+
+/build/

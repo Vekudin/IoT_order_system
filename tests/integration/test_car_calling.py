@@ -9,12 +9,19 @@ import pytest
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-EVENT_FILE = os.path.join(
-    os.path.dirname(__file__),
-    '..',
-    'test_data',
-    'sns_event.json'
-)
+event = {
+  "order": {
+    "car_id": "c1",
+    "pickup_location": {
+      "city": "Sofia",
+      "housing_estate": "Studentski grad",
+      "address": "Dr. Ivan Stranski 59 B"
+    },
+    "order_id": "o1",
+    "iot_topic": "cars/calls",
+    "sns_topic_arn": "arn:aws:sns:us-east-1:253712699852:orders_topic"
+  }
+}
 
 
 class Test(object):
@@ -46,10 +53,4 @@ class Test(object):
     def lambda_cli(self):
         return boto3.client('lambda')
 
-    @pytest.fixture()
-    def event(self):
-        with open(EVENT_FILE) as file:
-            event = json.loads(file.read())
-            event['order']['iot_topic'] = 'cars/test_calls'
-            return event
 

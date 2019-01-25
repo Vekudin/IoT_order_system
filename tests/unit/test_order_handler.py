@@ -8,20 +8,22 @@ from moto import mock_lambda
 
 from lambda_handlers.order_handler import lambda_handler as order_handler
 
-EVENTS_FILE = os.path.join(
-    os.path.dirname(__file__),
-    '..',
-    'test_data',
-    'order_event.json'
-)
+event = {
+  "order": {
+    "car_id": "c1",
+    "pickup_location": {
+      "city": "Sofia",
+      "housing_estate": "Studentski grad",
+      "address": "Dr. Ivan Stranski 59 B"
+    },
+    "order_id": "o1",
+    "iot_topic": "cars/calls",
+    "sns_topic_arn": "arn:aws:sns:us-east-1:253712699852:orders_topic"
+  }
+}
 
 
 class Test(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        with open(EVENTS_FILE) as f:
-            cls.event = json.loads(f.read())
 
     @mock_lambda
     def test_normal_payload(self):
