@@ -1,28 +1,51 @@
-from distutils.command.build_py import build_py as _build_py
 from setuptools import setup, find_packages
 import pkginfo
+import json
 
 
 version = '0.1.0'
+branch = "master"
+commit_hash = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+author = "Author Name"
 
-setup(
-    name="iot_order_system",
-    version=version,
-    packages=find_packages(),
-    include_package_data=True,
 
-    # This package_data include works only for 'install' and 'bdist' commands,
-    # 'sdist' needs MANIFEST.in
-    package_data={
-        'tests': ['*.json', '*.txt']
+def get_version_specifics(file_name='version_specifics.json'):
+    """Gets all of the data from a json file and returns it as a dict type which
+     is compatible with function setup's key word arguments."""
+
+    with open(file_name) as file:
+        data = file.read()
+
+    data = json.loads(data)
+
+    return {
+        'version': data['version'],
+        'author': data['author'],
+        'classifiers': [
+            'branch::' + data['branch'],
+            'commit_hash::' + data['commit_hash'],
+            'dist_timestamp::' + data['dist_timestamp']
+        ]
+    }
+
+
+setup_args = {
+    'name': "iot_order_system",
+    'packages': find_packages(),
+    'include_package_data': True,
+
+    'package_data': {
+        '': ['*.dat']
     },
 
-    author="Teodor Akov",
-    install_requires=['boto3', 'pkginfo', 'semver'],
-    python_requires='>=3',
+    'install_requires': ['boto3'],
+    'python_requires=': '>=3',
+    'branch=metadata': ['branch'],
+}
 
-    classifiers=[
-        'branch::master',
-        'commit_hash::hash_of_commit_here'
-    ]
-)
+# Get the needed version specific data and apply it setup_args
+version_specifics = get_version_specifics()
+setup_args.update(version_specifics)
+
+# Proceed the setup
+setup(**setup_args)
