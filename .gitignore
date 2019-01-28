@@ -6,9 +6,8 @@ __pycache__
 *.zip
 
 # ignoring local configurations
-config/car_caller_package
-config/order_handler_package
-config/.terraform
+config/*
+!config/system_config.tf
 *.tfstate
 *.backup
 
