@@ -35,7 +35,7 @@ setup_args = {
     'include_package_data': True,
 
     'package_data': {
-        '': ['*.dat']
+        '': ['*.json']
     },
 
     'install_requires': ['boto3'],
