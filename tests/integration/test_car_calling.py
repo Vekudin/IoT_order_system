@@ -1,10 +1,7 @@
-import time
-import os
-import json
 import logging
+import unittest
 
 import boto3
-import pytest
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -24,10 +21,11 @@ event = {
 }
 
 
-class Test(object):
+class Test(unittest.TestCase):
 
     @classmethod
-    def setup_class(cls):
+    def setUpClass(cls):
+        cls.lambda_cli = boto3.client('lambda')
         cls.iot = boto3.client('iot')
         cls.iot.create_topic_rule(
             ruleName='test_iot_topic',
@@ -44,13 +42,10 @@ class Test(object):
         )
 
     @classmethod
-    def teardown_class(cls):
+    def tearDownClass(cls):
         cls.iot.delete_topic_rule(
             ruleName='test_iot_topic'
         )
 
-    @pytest.fixture()
-    def lambda_cli(self):
-        return boto3.client('lambda')
 
 

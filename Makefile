@@ -1,20 +1,24 @@
+build_date=$(shell date --iso=seconds)
 branch=$(shell git rev-parse --abbrev-ref HEAD)
 commit_hash=$(shell git log -1 --pretty=format:"%H")
-author=$(shell git log -n1 --format="%an" )
+commit_message=$(shell git log -1 --pretty=format:"%s")
+author_name=$(shell git log -n1 --format="%an")
+author_date=$(shell git log -1 --pretty=format:"%ai")
 
-.PHONY: dist
-dist: 
-	# Collecting data and inserting it to "version_specifics.json"
-	printf "{\n" > version_specifics.json
-	printf "\t\"version\": \"%s\",\n" $(version) >> version_specifics.json
-	printf "\t\"author\": \"%s\",\n" $(author) >> version_specifics.json
-	printf "\t\"branch\": \"%s\",\n" $(branch) >> version_specifics.json
-	printf "\t\"commit_hash\": \"%s\",\n" $(commit_hash) >> version_specifics.json
-	printf "\t\"dist_timestamp\": \"%s\"\n" $(shell date --iso=seconds) \
-	>> version_specifics.json
-	printf "}\n" >> version_specifics.json
+present_build_metadata:
+	# Structuring the collected data into the file "present_build_metadata.json"
+	@echo "{" > present_build_metadata.json
+	@echo "\t\"version\": \""$(version)"\"," >> present_build_metadata.json
+	@echo "\t\"build_date\": \""$(build_date)"\"," >> present_build_metadata.json
+	@echo "\t\"git_state\": {" >> present_build_metadata.json
+	@echo "\t\t\"branch\": \""$(branch)"\"," >> present_build_metadata.json
+	@echo "\t\t\"commit_hash\": \""$(commit_hash)"\"," >> present_build_metadata.json
+	@echo "\t\t\"author_name\": \""$(author_name)"\"," >> present_build_metadata.json
+	@echo "\t\t\"author_date\": \""$(author_date)"\"," >> present_build_metadata.json
+	@echo "\t\t\"commit_message\": \""$(commit_message)"\"" >> present_build_metadata.json
+	@echo "\t}" >> present_build_metadata.json
+	@echo "}" >> present_build_metadata.json
 
-	# Use the collected data to create a source distribution
 	python setup.py sdist
 
 deploy:
