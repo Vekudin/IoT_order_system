@@ -1,8 +1,7 @@
 import json
-import os
-from requests import HTTPError
-import unittest2 as unittest
+import unittest
 
+from requests import HTTPError
 import boto3
 from moto import mock_lambda
 
@@ -25,7 +24,7 @@ event = {
 
 class Test(unittest.TestCase):
 
-    @mock_lambda
+    #@mock_lambda
     def test_normal_payload(self):
         lambda_cli = boto3.client('lambda')
 
