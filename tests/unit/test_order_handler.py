@@ -24,14 +24,13 @@ event = {
 
 class Test(unittest.TestCase):
 
-    #@mock_lambda
     def test_normal_payload(self):
         lambda_cli = boto3.client('lambda')
 
         response = lambda_cli.invoke(
             FunctionName='arn:aws:lambda:us-east-1:253712699852:function:order_handler',
             InvocationType='RequestResponse',
-            Payload=bytes(json.dumps(self.event), 'utf-8')
+            Payload=bytes(json.dumps(event), 'utf-8')
         )
         # Assert that function error is missing
         self.assertFalse(response.get('FunctionError'))

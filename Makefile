@@ -1,25 +1,13 @@
-build_date=$(shell date --iso=seconds)
-branch=$(shell git rev-parse --abbrev-ref HEAD)
-commit_hash=$(shell git log -1 --pretty=format:"%H")
-commit_message=$(shell git log -1 --pretty=format:"%s")
-author_name=$(shell git log -n1 --format="%an")
-author_date=$(shell git log -1 --pretty=format:"%ai")
-
-present_build_metadata:
-	# Structuring the collected data into the file "present_build_metadata.json"
-	@echo "{" > present_build_metadata.json
-	@echo "\t\"version\": \""$(version)"\"," >> present_build_metadata.json
-	@echo "\t\"build_date\": \""$(build_date)"\"," >> present_build_metadata.json
-	@echo "\t\"git_state\": {" >> present_build_metadata.json
-	@echo "\t\t\"branch\": \""$(branch)"\"," >> present_build_metadata.json
-	@echo "\t\t\"commit_hash\": \""$(commit_hash)"\"," >> present_build_metadata.json
-	@echo "\t\t\"author_name\": \""$(author_name)"\"," >> present_build_metadata.json
-	@echo "\t\t\"author_date\": \""$(author_date)"\"," >> present_build_metadata.json
-	@echo "\t\t\"commit_message\": \""$(commit_message)"\"" >> present_build_metadata.json
-	@echo "\t}" >> present_build_metadata.json
-	@echo "}" >> present_build_metadata.json
-
-	python setup.py sdist
+metadata_vitals.json:
+	# Saving vital metada in file "metadata_vitals.json"
+	@echo "{" > metadata_vitals.json
+	@echo "\t\"branch\": \""$(shell git rev-parse --abbrev-ref HEAD)"\"," \
+	>> metadata_vitals.json
+	@echo "\t\"commit_hash\": \""$(shell git log -1 --pretty=format:"%H")"\"," \
+	>> metadata_vitals.json
+	@echo "\t\"build_date\": \""$(shell date --iso=seconds)"\"" \
+	>> metadata_vitals.json
+	@echo "}" >> metadata_vitals.json
 
 deploy:
 	# |Preparing order_handler.zip|
