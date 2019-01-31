@@ -26,6 +26,36 @@ class EsService:
             connection_class=RequestsHttpConnection
         )
 
+    def index_new_car_status(self, car_payload):
+        body = {
+            "activity": car_payload['activity'],
+            "pickup_location": car_payload['pickup_location'],
+            "order_id": car_payload['order_id']
+        }
+
+        return self.es.index(
+            index="cars_activities",
+            doc_type="_doc",
+            id=car_payload['car_id'],
+            body=json.dumps(body)
+        )
+
+    def search_lucene(self, search_pairs):
+        """Takes a dictionary with <field>:<value> as key-value pairs and returns
+        a list of the found items queried with the lucene query syntax."""
+
+        search_pairs_list = [f"{k}:{v}" for k, v in search_pairs.items()]
+        q = " AND ".join(search_pairs_list)
+
+        # index is "" as the search operation will be on all indices
+        response =  self.es.search(
+            index="",
+            doc_type="_doc",
+            q=q
+        )
+
+        return response['hits']['hits']
+
     def update_car_status(self, car_payload):
         """Updates the car's information and target location data usually after an
         order was assigned to the vehicle."""

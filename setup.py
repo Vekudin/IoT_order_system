@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 logger = logging.getLogger()
 
 
-def extract_metadata(file_path='metadata_vitals.json'):
+def extract_metadata(file_path='.build.json'):
     """Reads all of the data from JSON file and returns it as a dictionary."""
 
     try:
@@ -24,14 +24,17 @@ def extract_metadata(file_path='metadata_vitals.json'):
     return metadata
 
 
+build_metadata = extract_metadata()
+
 setup(
-    name="iot_order_system",
+    name="project_name",
     version="0.1.0",
     packages=find_packages(),
-    include_package_data=True,
-    package_data={
-        '': ['*.json']
-    },
     install_requires=['boto3', 'cerberus', 'requests'],
     python_requires='>=3',
+    classifiers=[
+        f"branch : {build_metadata.get('branch')}",
+        f"commit_hash : {build_metadata.get('commit_hash')}",
+        f"build_date : {build_metadata.get('build_date')}"
+    ]
 )

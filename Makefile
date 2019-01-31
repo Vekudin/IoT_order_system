@@ -1,13 +1,18 @@
-metadata_vitals.json:
-	# Saving vital metada in file "metadata_vitals.json"
-	@echo "{" > metadata_vitals.json
-	@echo "\t\"branch\": \""$(shell git rev-parse --abbrev-ref HEAD)"\"," \
-	>> metadata_vitals.json
-	@echo "\t\"commit_hash\": \""$(shell git log -1 --pretty=format:"%H")"\"," \
-	>> metadata_vitals.json
-	@echo "\t\"build_date\": \""$(shell date --iso=seconds)"\"" \
-	>> metadata_vitals.json
-	@echo "}" >> metadata_vitals.json
+.PHONY: dist
+dist: .build.json
+	python setup.py sdist
+	rm -f .build.json
+
+.build.json : branch=$(shell git rev-parse --abbrev-ref HEAD)
+.build.json : commit_hash=$(shell git rev-parse HEAD)
+.build.json : build_date=$(shell date --iso=seconds)
+.build.json :
+	@echo \
+	"{\n" \
+	"\t\"branch\": \""$(branch)"\",\n" \
+	"\t\"commit_hash\": \""$(commit_hash)"\",\n" \
+	"\t\"build_date\": \""$(build_date)"\"\n" \
+	"}" > .build.json
 
 deploy:
 	# |Preparing order_handler.zip|
