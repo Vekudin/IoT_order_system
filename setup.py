@@ -1,15 +1,21 @@
 import json
 import logging
+import os
 
 from setuptools import setup, find_packages
+
+from load_lazy import LoadLazy
 
 
 logger = logging.getLogger()
 
 
-def extract_metadata(file_path='.build.json'):
-    """Reads all of the data from JSON file and returns it as a dictionary."""
+@LoadLazy
+def extract_metadata(file_name='.build.json'):
+    """Reads a JSON file located in the same directory as 'setup.py' and returns
+     the data from it as a dictionary."""
 
+    file_path = os.path.dirname(os.path.realpath(__file__)) + '/' + file_name
     try:
         with open(file_path) as file:
             metadata = json.loads(file.read())
@@ -24,17 +30,10 @@ def extract_metadata(file_path='.build.json'):
     return metadata
 
 
-build_metadata = extract_metadata()
-
 setup(
-    name="project_name",
-    version="0.1.0",
+    name="project_name-" + extract_metadata.branch,
+    version="0.1.0-" + extract_metadata.commit_hash[0:7],
     packages=find_packages(),
     install_requires=['boto3', 'cerberus', 'requests'],
-    python_requires='>=3',
-    classifiers=[
-        f"branch : {build_metadata.get('branch')}",
-        f"commit_hash : {build_metadata.get('commit_hash')}",
-        f"build_date : {build_metadata.get('build_date')}"
-    ]
+    python_requires='>=3'
 )
